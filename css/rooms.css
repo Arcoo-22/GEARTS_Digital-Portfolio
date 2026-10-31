@@ -1,60 +1,5 @@
-/* ==========================================================================
-   styles.css — LOOK. Sections: 1 THEME  2 HOME  3 FRAME (bar, pager, wipe)
-   4 SHARED ROOM STYLES  5-11 ROOM: one block per room  12 REDUCED MOTION
-   Each room gets its colors from rooms.js: --c background, --s shadow, --ink text.
-   ========================================================================== */
-
-/* ---------- 1. THEME ---------- */
-:root{--bg:#EDEAE4;--text:#17181C;--muted:#5d6068;--dark:#14120C;box-sizing:border-box}
-@media (prefers-color-scheme:dark){:root{--bg:#121316;--text:#EDEBE6;--muted:#9a9ca4}}
-*{box-sizing:border-box}
-html{-webkit-text-size-adjust:100%}
-body{margin:0;background:var(--bg);color:var(--text);font:400 1rem/1.5 "Bricolage Grotesque",system-ui,sans-serif;overflow-x:hidden}
-img{max-width:100%}
-a,button{-webkit-tap-highlight-color:transparent}
-:focus-visible{outline:3px solid #2B44F5;outline-offset:3px}
-.room :focus-visible,#pager :focus-visible,#bar :focus-visible{outline-color:#fff;box-shadow:0 0 0 6px var(--dark)}
-
-/* ---------- 2. HOME ---------- */
-.top,main,footer{max-width:1150px;margin:0 auto;padding-inline:clamp(1rem,4vw,2rem)}
-.top{padding-top:calc(clamp(2rem,7vw,4.5rem) + env(safe-area-inset-top,0px))}
-h1{font:800 clamp(2.6rem,9vw,6rem)/.92 "Bricolage Grotesque",sans-serif;letter-spacing:-.04em;margin:0 0 1rem}
-.top p{color:var(--muted);max-width:54ch;margin:0 0 2rem;font-size:1.1rem}
-.top-note{color:var(--muted)}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,250px),1fr));gap:clamp(1.2rem,3vw,2rem);grid-auto-flow:dense}
-.tile{display:flex;flex-direction:column;color:var(--ink);background:var(--c);box-shadow:7px 7px 0 var(--s);text-decoration:none;transition:transform .2s,box-shadow .2s}
-.tile:hover,.tile:focus-visible{transform:translate(-3px,-3px);box-shadow:10px 10px 0 var(--s)}
-.tile img{display:block;width:100%;aspect-ratio:4/5;object-fit:cover;border-bottom:4px solid var(--ink)}
-.tile .cap{display:block;padding:.75rem .9rem 1rem}
-.tile b{display:block;font-size:1.25rem;line-height:1.15;font-weight:800}
-.tile .cap span{font-size:.9rem}
-.t-scribble b{font-family:"Permanent Marker",cursive;font-weight:400}
-.t-finals{grid-column:span 2;position:relative}
-.t-finals img{aspect-ratio:8/5;object-position:center 30%}
-.t-finals b{font-size:1.7rem}
-.t-finals::after{content:"";position:absolute;left:50%;top:38%;width:64px;height:64px;transform:translate(-50%,-50%);border-radius:50%;background:rgba(255,255,255,.9) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M9 6l9 6-9 6z' fill='%23000'/%3E%3C/svg%3E") center/32px no-repeat}
-footer{padding-top:3rem;padding-bottom:3rem;color:var(--muted)}
-footer a{color:var(--text)}
-@media (max-width:560px){.t-finals{grid-column:auto}.t-finals img{aspect-ratio:4/5}}
-
-/* ---------- 3. FRAME: top bar, previous/next bar, color wipe ---------- */
-#bar{position:fixed;top:0;left:0;right:0;z-index:40;display:none;justify-content:space-between;align-items:center;padding:calc(.7rem + env(safe-area-inset-top,0px)) clamp(1rem,4vw,2rem) .7rem;pointer-events:none}
-.in-room #bar{display:flex}
-#bar a{pointer-events:auto;background:var(--dark);color:#fff;text-decoration:none;font-weight:700;padding:.4rem 1rem;min-height:44px;display:flex;align-items:center;border-radius:99px}
-#pager{position:fixed;left:0;right:0;bottom:0;z-index:40;display:none;justify-content:space-between;align-items:center;gap:.6rem;padding:.7rem clamp(1rem,4vw,2rem) calc(.7rem + env(safe-area-inset-bottom,0px));pointer-events:none}
-.in-room #pager{display:flex}
-#pager>*{pointer-events:auto}
-.pg{display:flex;flex-direction:column;justify-content:center;min-height:56px;padding:.4rem 1.3rem;background:var(--dark);color:#fff;text-decoration:none;font-weight:800;font-size:1.15rem;line-height:1.15;border-radius:99px;border:3px solid #fff;box-shadow:0 6px 18px rgba(0,0,0,.35)}
-.pg small{display:none;font-weight:400;font-size:.78rem;opacity:.85;max-width:16ch;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.pg.next{text-align:right;align-items:flex-end}
-.pos{background:#fff;color:var(--dark);font-weight:800;border-radius:99px;padding:.35rem .9rem;border:3px solid var(--dark)}
-@media (min-width:700px){.pg small{display:block}}
-#wipe{position:fixed;inset:0;z-index:35;transform:translateY(100%);pointer-events:none}
-
+/* Artwork styles, one block per piece. Each keeps its own look. */
 /* ---------- 4. SHARED ROOM STYLES ---------- */
-#room{position:fixed;inset:0;z-index:20;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;visibility:hidden;outline:0}
-#room.on{visibility:visible}
-.room{min-height:100%;padding:calc(5rem + env(safe-area-inset-top,0px)) clamp(1rem,5vw,3rem) calc(8rem + env(safe-area-inset-bottom,0px));position:relative;overflow:hidden;background:var(--c);color:var(--ink)}
 .room h2{font:800 clamp(2.6rem,11vw,7rem)/.9 "Bricolage Grotesque",sans-serif;letter-spacing:-.045em;margin:0 0 .6rem}
 .sub{font-weight:700;margin:0 0 1rem}
 .note{max-width:60ch;font-size:1.15rem}
@@ -142,5 +87,3 @@ footer a{color:var(--text)}
 .transcript{max-width:60ch;margin:1rem auto 0;text-align:left}
 .transcript summary{cursor:pointer;font-weight:700}
 
-/* ---------- 12. REDUCED MOTION ---------- */
-@media (prefers-reduced-motion:reduce){.tile,.band,.poem li{transition:none}.bar,.cof img{animation:none}.cof img{--m:120%}}

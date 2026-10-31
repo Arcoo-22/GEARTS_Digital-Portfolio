@@ -11,7 +11,7 @@ const SITE = {
   name:      "Marco R. Ocampo",
   className: "BSIT 3A",
   email:     "",   // EDIT: your email, e.g. "marco@school.edu". Leave "" to hide the contact link.
-  intro:     "Seven pieces from my art class: scribbles, found poems, coffee, a remixed masterpiece and a short film. Each one has its own room, so pick one to step inside."
+  intro:     "Seven art-class pieces, a film analysis, a song, a photograph and a manga drawing, all in one reel. Scroll to move through it."
 };
 
 
@@ -106,9 +106,9 @@ const ROOMS = [
     tile: "img/t-time.webp", img: "img/time.webp", w: 900, h: 1352,
     alt: "Painting of a woman with folded hands in bold flat colors: orange face, purple and teal clothes, pink and blue background",
     eras: [["c. 1503", "Mona Lisa, Leonardo da Vinci: a Renaissance portrait"],
-           ["1905", "Fauvism: color for color’s sake"],
+           ["1905", "Modern: color for color’s sake"],
            ["2026", "My version"]],
-    note: "The Mona Lisa rebuilt the Fauvist way: flat, loud colors chosen for feeling, not realism."   // EDIT
+    note: "The Mona Lisa rebuilt the Modern way: flat, loud colors chosen for feeling, not realism."   // EDIT
   },
 
   /* --- Finals video. describe = text description for people who can't watch/hear it.
@@ -122,4 +122,81 @@ const ROOMS = [
     describe: "A small statue of a figure in white stands with two children. The video runs 30 seconds and has sound.",   // EDIT: add what happens and what you hear
     note: "A 30-second video. Turn the sound on."
   }
+];
+
+
+/* ==========================================================================
+   NEW SECTIONS. Edit the words, links and file names below.
+   ========================================================================== */
+
+/* ---------- WRITTEN ANALYSIS: pages are img/analysis/page-01.webp ... (already made from your PDF) ---------- */
+const ANALYSIS = {
+  title: "Balota (2024): artwork analysis",
+  blurb: "A written analysis of a five-minute sequence from Dakip “Kip” Oebanda’s film, using the art criticism process: observation, analysis, contextualization, interpretation and judgment. Drag or swipe through the pages.",
+  pages: 15,
+  pdf: "Balota_Written_Analysis.pdf"
+};
+
+/* ---------- VIDEO ANALYSIS: paste your YouTube link between the quotes ---------- */
+const VIDEO = {
+  url: "",    // EDIT: e.g. "https://youtu.be/xxxxxxxxxxx" or "https://www.youtube.com/watch?v=xxxxxxxxxxx"
+  title: "Balota, spoken",
+  blurb: "The same analysis, recorded. Press play, or jump straight to a chapter.",
+  // EDIT: t = start time in seconds for each chapter
+  chapters: [
+    { name: "Observation",       t: 0 },
+    { name: "Cinematography",    t: 60 },
+    { name: "Editing",           t: 150 },
+    { name: "Sound design",      t: 220 },
+    { name: "Interpretation",    t: 300 },
+    { name: "Judgment",          t: 420 }
+  ]
+};
+
+/* ---------- SONG ---------- */
+const SONG = {
+  title: "One in a Million",
+  artist: "Marco R. Ocampo",      // EDIT: artist name(s)
+  year: 2026,                      // EDIT
+  file: "audio/one-in-a-million.mp3",
+  cover: "img/music-cover.webp",
+  note: "Press play and let it run while you scroll. Tell the story of the song here: why you picked it, who it is for, what it means to you."   // EDIT
+};
+
+/* ---------- PHOTOGRAPHY ---------- */
+const PHOTO = {
+  title: "Photography",
+  img: "img/photography.webp", w: 1300, h: 2311,
+  alt: "A person in a white top and black trousers stands on grass under tall trees with sunlight breaking through the branches",
+  caption: "Light through the branches.",   // EDIT
+  note: "A quiet moment under old trees, with the sun breaking through the canopy. Write where it was taken, what you wanted to capture and how you framed it.",   // EDIT
+  details: [["Place", "Add place"], ["Device", "Add device"], ["Year", "2026"]]   // EDIT
+};
+
+/* ---------- MANGA ---------- */
+const MANGA = {
+  title: "Gojo",
+  sub: "Ink study",
+  medium: "Pen on paper", year: 2024,   // the drawing is signed 10/27/2024
+  img: "img/manga-gojo.webp", w: 1300, h: 1733,
+  alt: "Black ink drawing of a spiky-haired anime character in profile, head bowed, with heavy black shading across the shoulder",
+  bubble: "Black ink on white paper.",   // EDIT: your words about the drawing
+  note: "Drawn in black pen after Gojo Satoru from Jujutsu Kaisen. The hair is made of quick, sharp strokes and the shoulder is filled with dense hatching."   // EDIT
+};
+
+/* ---------- APPENDICES: proofs and references. ----------
+   Put images in img/appendix/ and fill in `img`. Leave img "" to show an empty slot.
+   kind: "Proof" or "Reference". link is optional. */
+const APPENDICES = [
+  { kind: "Reference", title: "Oebanda, K. (Director). (2024). Balota", text: "Film. GMA Pictures; GMA Entertainment Group; Cinemalaya Foundation.", link: "", img: "" },
+  { kind: "Reference", title: "ABS-CBN News (2025, May 11)", text: "Son of teacher killed in 1995 elections appeals to public to value their vote.", link: "https://abs-cbn.com/news/2025/5/11/son-of-teacher-killed-in-1995-elections-appeals-to-public-to-value-their-vote-1049", img: "" },
+  { kind: "Reference", title: "Pimentel, A. Q., Jr. (2007). Senate Resolution No. 630", text: "On the burning of Pinagbayanan Elementary School in Taysan, Batangas, and election-related violence.", link: "https://web.senate.gov.ph/lisdata/71205755!.pdf", img: "" },
+  { kind: "Reference", title: "The Cardsharps, Caravaggio, c. 1594", text: "Source painting for the AI art appropriation.", link: "", img: "" },
+  { kind: "Reference", title: "Mona Lisa, Leonardo da Vinci, c. 1503", text: "Source painting for Art through time.", link: "", img: "" },
+  { kind: "Proof", title: "Scribble: work in progress", text: "Add a photo of the drawing before the black cover.", link: "", img: "" },
+  { kind: "Proof", title: "Book-spine poetry: the shelf", text: "Add a photo of the books you picked.", link: "", img: "" },
+  { kind: "Proof", title: "Blackout poetry: original page", text: "Add the printed page before it was blacked out.", link: "", img: "" },
+  { kind: "Proof", title: "Coffee painting: process", text: "Add a photo of the painting being made.", link: "", img: "" },
+  { kind: "Proof", title: "AI appropriation: prompt screenshot", text: "Add a screenshot of the tool and prompt.", link: "", img: "" },
+  { kind: "Proof", title: "Photography and manga: originals", text: "Add the original files or a photo of the paper.", link: "", img: "" }
 ];

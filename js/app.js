@@ -1,54 +1,26 @@
 /* ==========================================================================
-   app.js — BEHAVIOR. Words and pictures live in rooms.js, not here.
-
-   Sections (search for the number to jump):
-     1. SETTINGS            numbers you can tweak (brush size, swipe distance...)
-     2. HELPERS             small tools used everywhere
-     3. HOME PAGE           name, intro, tiles, footer
-     4. ROOM TEMPLATES      the HTML of each room type (one function per type)
-     5. ROOM INTERACTIONS   scribble eraser, spine poem, before/after slider
-     6. PREVIOUS / NEXT     buttons, swipe, arrow keys
-     7. ROUTER              opens and closes rooms from the # in the address
+   app.js — BEHAVIOR. Words, pictures and links live in rooms.js, not here.
+     1 SETTINGS  2 HELPERS  3 ARTWORK TEMPLATES + INTERACTIONS (unchanged from before)
+     4 PAGE CHROME (hero, index, footer)  5 HORIZONTAL RAILS  6 VIDEO  7 MUSIC  8 PHOTO + MANGA
+     9 SCROLL MOTION  10 START
    ========================================================================== */
 (() => {
 "use strict";
 
-
 /* ---------- 1. SETTINGS ---------- */
 const SETTINGS = {
-  wipeMs: 400,          // length of the color wipe between rooms
-  brushSize: 90,        // scribble eraser: minimum size in px (bigger = easier to uncover)
-  brushRatio: 0.18,     // scribble eraser: or this share of the drawing width, whichever is larger
-  swipeDistance: 60,    // px a finger must travel sideways to count as a swipe
-  eagerTiles: 4         // how many home tiles load right away (the rest load as you scroll)
+  brushSize: 90,      // scribble eraser: minimum size in px (bigger = easier to uncover)
+  brushRatio: 0.18    // scribble eraser: or this share of the drawing width, whichever is larger
 };
-
 
 /* ---------- 2. HELPERS ---------- */
 const $ = (sel, from = document) => from.querySelector(sel);
+const $$ = (sel, from = document) => [...from.querySelectorAll(sel)];
 const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
-const vars = r => `--c:${r.color};--s:${r.shadow};--ink:${r.ink}`;     // each room's colors, passed to the CSS
+const vars = r => `--c:${r.color};--s:${r.shadow};--ink:${r.ink}`;
+const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
 const reduceMotion = matchMedia("(prefers-reduced-motion:reduce)").matches;
-
-const roomEl = $("#room"), wipeEl = $("#wipe"), pagerEl = $("#pager");
-const pageParts = [...document.querySelectorAll("header.top, main, footer")];   // hidden from keyboard while a room is open
-const HOME_TITLE = document.title;
-
-
-/* ---------- 3. HOME PAGE ---------- */
-function renderHome() {
-  $("#h1").textContent = SITE.name;
-  $("#nm").textContent = SITE.name;
-  $("#intro").textContent = SITE.intro;
-  $("#ft").innerHTML = esc(SITE.className) +
-    (SITE.email ? `. Contact: <a href="mailto:${esc(SITE.email)}">${esc(SITE.email)}</a>` : "");
-  // alt is empty on purpose: the caption already names the piece, so screen readers don't hear it twice
-  $("#grid").innerHTML = ROOMS.map((r, i) =>
-    `<a class="tile t-${r.id}" href="#${r.id}" style="${vars(r)}">
-       <img src="${r.tile}" alt="" loading="${i < SETTINGS.eagerTiles ? "eager" : "lazy"}" decoding="async">
-       <span class="cap"><b>${esc(r.title)}</b><span>${esc(r.medium)}</span></span></a>`).join("");
-}
-
+const mmss = s => isFinite(s) ? Math.floor(s / 60) + ":" + String(Math.floor(s % 60)).padStart(2, "0") : "0:00";
 
 /* ---------- 4. ROOM TEMPLATES ----------
    Each function returns the HTML for one room type. To change a room's layout, edit its function
@@ -173,92 +145,197 @@ const INTERACTIONS = {
 };
 
 
-/* ---------- 6. PREVIOUS / NEXT ----------
-   Buttons at the bottom, left/right arrow keys, and swiping. All wrap around. */
-function renderPager(i) {
-  const n = ROOMS.length, prev = ROOMS[(i - 1 + n) % n], next = ROOMS[(i + 1) % n];
-  pagerEl.innerHTML =
-    `<a class="pg prev" href="#${prev.id}" aria-label="Previous piece: ${esc(prev.title)}">← Previous<small>${esc(prev.title)}</small></a>
-     <span class="pos" aria-live="polite">${i + 1} of ${n}</span>
-     <a class="pg next" href="#${next.id}" aria-label="Next piece: ${esc(next.title)}">Next →<small>${esc(next.title)}</small></a>`;
-}
-
-function step(dir) {                       // dir = 1 (next) or -1 (previous)
-  if (!target) return;
-  const n = ROOMS.length;
-  location.hash = ROOMS[(ROOMS.indexOf(target) + dir + n) % n].id;
-}
-
-addEventListener("keydown", e => {
-  if (!target) return;
-  if (e.key === "Escape") location.hash = "home";
-  const typing = e.target.closest("input, video, textarea");      // the slider and video use the arrow keys themselves
-  if (!typing && e.key === "ArrowRight") step(1);
-  if (!typing && e.key === "ArrowLeft") step(-1);
-});
-
-let swipe = null;
-roomEl.addEventListener("touchstart", e => {
-  const t = e.touches[0];
-  // don't swipe from the eraser, slider or video, and ignore pinch gestures
-  const blocked = e.touches.length > 1 || e.target.closest("canvas, input, video");
-  swipe = blocked ? null : { x: t.clientX, y: t.clientY };
-}, { passive: true });
-roomEl.addEventListener("touchend", e => {
-  if (!swipe || !target) return;
-  const t = e.changedTouches[0], dx = t.clientX - swipe.x, dy = t.clientY - swipe.y;
-  swipe = null;
-  if (Math.abs(dx) >= SETTINGS.swipeDistance && Math.abs(dx) > Math.abs(dy) * 1.5) step(dx < 0 ? 1 : -1);
-}, { passive: true });
 
 
-/* ---------- 7. ROUTER ----------
-   target = the room the address asks for (updated at once, so fast taps can't get out of sync)
-   shown  = the room currently drawn (updated when the wipe covers the screen) */
-let target = null, shown = null, token = 0;
+/* ---------- 4. PAGE CHROME ---------- */
+function renderChrome() {
+  $("#nm").textContent = SITE.name;
+  const w = SITE.name.split(" "), last = w.pop();
+  $("#h1").innerHTML = [w.join(" "), last].filter(Boolean).map((t, i) => `<span class="ln"><span style="--i:${i}">${esc(t)}</span></span>`).join("");
+  $("#h1").setAttribute("aria-label", SITE.name);
+  $("#intro").textContent = SITE.intro;
+  $("#ft").innerHTML = esc(SITE.className) + (SITE.email ? `. Contact: <a href="mailto:${esc(SITE.email)}">${esc(SITE.email)}</a>` : "");
 
-function draw(r) {
-  const leaving = shown;
-  if (r) {
-    roomEl.innerHTML = TEMPLATES[r.type](r);
-    roomEl.className = "on"; roomEl.scrollTop = 0;
-    renderPager(ROOMS.indexOf(r));
-    document.body.classList.add("in-room"); document.body.style.overflow = "hidden";
-    document.title = `${r.title} — ${SITE.name}`;
-    pageParts.forEach(p => p.inert = true);                 // keyboard and screen readers stay inside the room
-    INTERACTIONS[r.type] && INTERACTIONS[r.type](roomEl);
-    roomEl.focus({ preventScroll: true });
-  } else {
-    roomEl.className = ""; roomEl.innerHTML = "";
-    document.body.classList.remove("in-room"); document.body.style.overflow = "";
-    document.title = HOME_TITLE;
-    pageParts.forEach(p => p.inert = false);
-    const tile = leaving && $(`.tile[href="#${leaving.id}"]`);
-    if (tile) tile.focus({ preventScroll: true });          // put focus back on the tile you came from
-  }
-  shown = r;
-}
+  // floating cards in the hero: [x %, y %, size in vmin, depth px, tilt deg]
+  const spots = [[13,27,19,-80,-7],[87,29,20,40,6],[27,78,17,120,4],[82,80,16,-150,-5],[50,11,13,-320,2],[5,60,13,-260,8],[95,62,13,-240,-6],[62,90,14,200,3],[40,92,13,-100,-4]];
+  const pics = [...ROOMS.map(r => ({ src: r.tile, c: r.color, s: r.shadow, ink: r.ink })),
+    { src: "img/music-cover.webp", c: "#1ED760", s: "#14120C", ink: "#14120C" }, { src: "img/manga-gojo.webp", c: "#F3F1EA", s: "#14120C", ink: "#14120C" }];
+  const order = [0, 5, 3, 4, 2, 1, 6, 8, 7];            // which picture goes in which spot
+  $("#cards").innerHTML = spots.map((p, i) => { const x = pics[order[i]];
+    return `<div class="card" style="--x:${p[0]}%;--y:${p[1]}%;--w:clamp(90px,${p[2]}vmin,260px);--d:${p[3]}px;--r:${p[4]}deg;--a:${-i * 1.1}s;--c:${x.c};--s:${x.s};--ink:${x.ink}"><img src="${x.src}" alt="" ${i > 3 ? 'loading="lazy"' : ""}></div>`; }).join("");
 
-function route() {
-  const next = ROOMS.find(x => x.id === location.hash.slice(1)) || null;
-  if (next === target) return;
-  const from = target; target = next;
-  if (reduceMotion) return draw(next);
+  $("#idx").innerHTML = ROOMS.map(r => `<a class="tile t-${r.id}" href="#${r.id}" style="${vars(r)}"><img src="${r.tile}" alt="" loading="lazy"><b>${esc(r.title)}</b></a>`).join("");
 
-  const mine = ++token;
-  wipeEl.style.background = (next || from).color;
-  wipeEl.style.transition = "none"; wipeEl.style.transform = "translateY(100%)"; wipeEl.offsetWidth;
-  wipeEl.style.transition = `transform ${SETTINGS.wipeMs - 20}ms cubic-bezier(.7,0,.3,1)`; wipeEl.style.transform = "translateY(0)";
-  setTimeout(() => {
-    if (mine !== token) return;                             // a newer tap took over: let it draw
-    draw(next);
-    wipeEl.style.transform = "translateY(-100%)";
-  }, SETTINGS.wipeMs);
+  $("#rooms").innerHTML = ROOMS.map(r => TEMPLATES[r.type](r).replace('<section class="room', `<section id="${r.id}" class="room`)).join("");
+  ROOMS.forEach(r => INTERACTIONS[r.type] && INTERACTIONS[r.type]($("#" + r.id)));
+  $$(".room .pic, .room .cof, .room .paint, .room .bo figure").forEach(n => n.classList.add("tilt"));   // 3D lean while scrolling
 }
 
 
-/* ---------- START ---------- */
-renderHome();
-addEventListener("hashchange", route);
-route();
+/* ---------- 5. HORIZONTAL RAILS (analysis + appendices) ----------
+   Drag, swipe, arrow keys or the buttons. Cards turn in 3D as they leave the center. */
+function rail(el, ui, label, items, extra = "") {
+  el.tabIndex = 0; el.setAttribute("role", "region"); el.setAttribute("aria-label", label); el.innerHTML = items;
+  ui.innerHTML = `<button class="rb" data-d="-1" aria-label="Previous">←</button><button class="rb" data-d="1" aria-label="Next">→</button><div class="trk"><i></i></div><span class="cnt"></span>${extra}`;
+  const kids = [...el.children], cnt = $(".cnt", ui), trk = $(".trk", ui);
+  let raf = 0;
+  const update = () => {
+    raf = 0; let best = 0, bd = 1e9;
+    kids.forEach((k, i) => {
+      const d = k.offsetLeft + k.offsetWidth / 2 - el.scrollLeft - el.clientWidth / 2, o = clamp(d / el.clientWidth, -1, 1);
+      k.style.setProperty("--o", reduceMotion ? 0 : o.toFixed(3)); k.style.setProperty("--a", reduceMotion ? 0 : Math.abs(o).toFixed(3));
+      if (Math.abs(d) < bd) { bd = Math.abs(d); best = i; }
+    });
+    cnt.textContent = `${best + 1} / ${kids.length}`;
+    trk.style.setProperty("--v", (el.scrollLeft / Math.max(1, el.scrollWidth - el.clientWidth)).toFixed(3));
+  };
+  const req = () => raf || (raf = requestAnimationFrame(update));
+  el.addEventListener("scroll", req, { passive: true }); addEventListener("resize", req); update();
+  ui.addEventListener("click", e => { const b = e.target.closest("[data-d]"); if (b) el.scrollBy({ left: b.dataset.d * (kids[0].offsetWidth + 24), behavior: reduceMotion ? "auto" : "smooth" }); });
+  let down = false, sx = 0, sl = 0, moved = 0;                       // mouse drag
+  el.addEventListener("pointerdown", e => { if (e.pointerType !== "mouse") return; down = true; sx = e.clientX; sl = el.scrollLeft; moved = 0; });
+  addEventListener("pointermove", e => { if (!down) return; moved = Math.max(moved, Math.abs(e.clientX - sx)); if (moved > 5) el.classList.add("drag"); el.scrollLeft = sl - (e.clientX - sx); });
+  addEventListener("pointerup", () => { if (down) { down = false; setTimeout(() => el.classList.remove("drag")); } });
+  el.addEventListener("click", e => { if (moved > 5) { e.preventDefault(); e.stopPropagation(); moved = 0; } }, true);
+}
+
+/* Flex carousel (appendices): one folder is open, the rest fold back narrow. Click, arrow keys, buttons or swipe. */
+function flexRail(el, ui, label, items) {
+  el.classList.add("fx"); el.tabIndex = -1; el.setAttribute("role", "group"); el.setAttribute("aria-label", label); el.innerHTML = items;
+  ui.innerHTML = `<button class="rb" data-d="-1" aria-label="Previous">←</button><button class="rb" data-d="1" aria-label="Next">→</button><div class="trk"><i></i></div><span class="cnt"></span>`;
+  const kids = [...el.children]; let cur = 0, run = 0;
+  const follow = () => {                                   // keep the open folder centered while the widths animate
+    const end = performance.now() + 750; cancelAnimationFrame(run);
+    const tick = () => { const k = kids[cur], t = k.offsetLeft + k.offsetWidth / 2 - el.clientWidth / 2;
+      el.scrollLeft += (t - el.scrollLeft) * (reduceMotion ? 1 : .22); if (performance.now() < end) run = requestAnimationFrame(tick); };
+    tick();
+  };
+  const open = (i, move = true) => {
+    cur = clamp(i, 0, kids.length - 1);
+    kids.forEach((k, j) => { k.classList.toggle("on", j === cur); k.setAttribute("aria-expanded", j === cur); $(".in", k).inert = j !== cur; });
+    $(".cnt", ui).textContent = `${cur + 1} / ${kids.length}`; $(".trk", ui).style.setProperty("--v", cur / Math.max(1, kids.length - 1));
+    if (move) follow();
+  };
+  kids.forEach((k, i) => { k.tabIndex = 0; k.setAttribute("role", "button"); k.setAttribute("aria-label", $(".vt", k).textContent);
+    k.addEventListener("click", e => { if (i !== cur) { e.preventDefault(); open(i); } });
+    k.addEventListener("keydown", e => { if (e.target === k && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); open(i); } }); });
+  el.addEventListener("keydown", e => { if (e.key === "ArrowRight" || e.key === "ArrowLeft") { e.preventDefault(); open(cur + (e.key === "ArrowRight" ? 1 : -1)); kids[cur].focus({ preventScroll: true }); } });
+  ui.addEventListener("click", e => { const b = e.target.closest("[data-d]"); if (b) open(cur + +b.dataset.d); });
+  open(0, false);
+}
+
+function renderRails() {
+  $("#anT").textContent = ANALYSIS.title; $("#anB").textContent = ANALYSIS.blurb;
+  rail($("#anHS"), $("#anUI"), "Written analysis pages",
+    Array.from({ length: ANALYSIS.pages }, (_, i) => `<figure class="pg"><img src="img/analysis/page-${String(i + 1).padStart(2, "0")}.webp" width="935" height="1210" alt="Page ${i + 1} of the written analysis" draggable="false" ${i > 1 ? 'loading="lazy"' : ""}></figure>`).join(""),
+    ANALYSIS.pdf ? `<a class="pill" href="${esc(ANALYSIS.pdf)}" download>Download PDF</a>` : "");
+  flexRail($("#apHS"), $("#apUI"), "Appendices: proofs and references",
+    APPENDICES.map(a => `<article class="fold" data-kind="${esc(a.kind)}"><span class="vt">${esc(a.title)}</span><div class="in"><span class="tag">${esc(a.kind)}</span><b>${esc(a.title)}</b><p>${esc(a.text)}</p>
+      ${a.img ? `<img class="pf" src="${esc(a.img)}" alt="${esc(a.title)}" loading="lazy" draggable="false">` : a.kind === "Proof" ? `<div class="ph">Image to be added</div>` : ""}
+      ${a.link ? `<a href="${esc(a.link)}" target="_blank" rel="noopener">Open source</a>` : ""}</div></article>`).join(""));
+}
+
+
+/* ---------- 6. VIDEO (YouTube) ---------- */
+function renderVideo() {
+  const m = VIDEO.url.match(/(?:youtu\.be\/|v=|embed\/|shorts\/)([\w-]{11})/), id = m && m[1];
+  const t0 = new Date().getFullYear();
+  $("#vidWrap").innerHTML = `<h2 class="rv">${esc(VIDEO.title)}</h2><p class="lede">${esc(VIDEO.blurb)}</p>
+    <div class="clap" aria-hidden="true"><div class="arm"></div><div class="body"><b>${esc(ANALYSIS.title)}</b><span>Take 1</span><span>Directed by ${esc(SITE.name)}</span><span>${t0}</span></div></div>
+    <div class="curt"><div class="screen" id="screen">${id
+      ? `<button type="button" aria-label="Play the video analysis" style="background-image:url(https://i.ytimg.com/vi/${id}/hqdefault.jpg)"><span class="play"></span></button>`
+      : `<div class="bars" role="img" aria-label="Test pattern. The video analysis is coming soon."><p>Stand by. The video analysis is coming soon.</p></div>`}</div>
+      <i class="drape l"></i><i class="drape r"></i></div>
+    <div class="chap">${VIDEO.chapters.map(c => `<button type="button" data-t="${c.t}" ${id ? "" : 'aria-disabled="true"'}>${esc(c.name)} <small>${mmss(c.t)}</small></button>`).join("")}</div>`;
+  const play = t => { if (!id) return; $("#screen").innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0&start=${t}" title="${esc(VIDEO.title)}" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>`; };
+  $("#vidWrap").addEventListener("click", e => { if (e.target.closest("#screen button")) play(0); const c = e.target.closest("[data-t]"); if (c) play(+c.dataset.t); });
+}
+
+
+/* ---------- 7. MUSIC (Spotify-style player) ---------- */
+function renderMusic() {
+  const ico = { play: '<svg viewBox="0 0 24 24" class="i-play" aria-hidden="true"><path d="M7 4.5v15l13-7.5z"/></svg><svg viewBox="0 0 24 24" class="i-pause" aria-hidden="true"><path d="M6 4h4v16H6zM14 4h4v16h-4z"/></svg>' };
+  $("#music").innerHTML = `<div class="wrap" id="player">
+    <div class="m-head"><div class="disc"><span class="vinyl"></span><img class="sleeve" src="${SONG.cover}" alt="Cover art for ${esc(SONG.title)}"></div>
+      <div class="m-meta"><small>Song</small><h2 class="rv">${esc(SONG.title)}</h2><p>${esc(SONG.artist)} <span>• ${SONG.year}</span></p></div></div>
+    <div class="m-ctl"><button class="big-play" id="pp" aria-label="Play">${ico.play}</button>
+      <button class="ic" id="lp" aria-pressed="false" aria-label="Repeat">Repeat</button><div class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+      <label class="vol">Volume <input id="vol" type="range" min="0" max="1" step=".05" value="1"></label></div>
+    <div class="list"><div class="row-t"><span class="n">1</span><b>${esc(SONG.title)}</b><span id="dur">0:00</span></div></div>
+    <div class="bar-p"><span id="cur">0:00</span><input id="seek" type="range" min="0" max="1000" value="0" aria-label="Seek"><span id="rem">0:00</span></div>
+    <p class="m-note">${esc(SONG.note)}</p><audio id="aud" src="${SONG.file}" preload="metadata"></audio></div>`;
+  const a = $("#aud"), box = $("#player"), pp = $("#pp"), seek = $("#seek");
+  const state = () => { box.classList.toggle("playing", !a.paused); pp.setAttribute("aria-label", a.paused ? "Play" : "Pause"); };
+  pp.onclick = () => a.paused ? a.play() : a.pause();
+  ["play", "pause", "ended"].forEach(ev => a.addEventListener(ev, state));
+  a.addEventListener("loadedmetadata", () => { $("#dur").textContent = $("#rem").textContent = mmss(a.duration); });
+  a.addEventListener("timeupdate", () => { if (!seek.matches(":active")) seek.value = a.duration ? a.currentTime / a.duration * 1000 : 0; $("#cur").textContent = mmss(a.currentTime); $("#rem").textContent = mmss(a.duration); });
+  seek.oninput = () => { if (a.duration) a.currentTime = seek.value / 1000 * a.duration; };
+  $("#vol").oninput = e => a.volume = e.target.value;
+  $("#lp").onclick = e => { a.loop = !a.loop; e.target.setAttribute("aria-pressed", a.loop); };
+}
+
+
+/* ---------- 8. PHOTOGRAPHY + MANGA ---------- */
+function renderPhotoManga() {
+  $("#photoPin").innerHTML = `<div class="ph-bg" style="background-image:url(${PHOTO.img})"></div>
+    <div class="ph-win"><div class="ph-fr"><img src="${PHOTO.img}" width="${PHOTO.w}" height="${PHOTO.h}" alt="${esc(PHOTO.alt)}"></div></div>
+    <div class="ph-ttl"><h2>${esc(PHOTO.title)}</h2><p>${esc(PHOTO.caption)}</p></div>
+    <div class="ph-info"><p>${esc(PHOTO.note)}</p><dl>${PHOTO.details.map(d => `<dt>${esc(d[0])}</dt><dd>${esc(d[1])}</dd>`).join("")}</dl></div>`;
+  const M = MANGA;
+  $("#manga").innerHTML = `<div class="mg">
+    <figure class="pn a" style="margin:0"><img src="${M.img}" width="${M.w}" height="${M.h}" alt="${esc(M.alt)}" loading="lazy"></figure>
+    <div class="pn b"><span class="vt" aria-hidden="true">呪術廻戦</span><h2>${esc(M.title.toUpperCase())}</h2></div>
+    <div class="pn c" aria-hidden="true"><p class="sfx">ゴゴゴ</p></div>
+    <div class="pn d"><div class="bub">${esc(M.bubble)}</div><p>${esc(M.note)}</p><small>${esc(M.sub)}. ${esc(M.medium)}, ${M.year}</small></div></div>`;
+}
+
+
+/* ---------- 9. SCROLL MOTION ----------
+   One scroll listener drives: hero push-in, section iris, photo mask, 3D lean, nav highlight. */
+function motion() {
+  const hero = $("#top"), stage = $("#stage"), txt = $("#heroTxt"), photo = $("#photography"), pin = $("#photoPin");
+  const rooms = $$(".room"), tilts = $$(".tilt"), links = $$("#nav nav a"), ids = links.map(l => l.getAttribute("href").slice(1));
+  const sections = ids.map(i => $("#" + i));
+
+  // mask reveals: headings, framed artwork and panels open as they enter view
+  const pending = new Set([...$$(".room h2, .room .art, .room .big, .sec h2, .work h2, .m-meta h2"), ...$$(".pn, .curt")]);
+  pending.forEach(n => { if (!n.classList.contains("pn") && !n.classList.contains("curt")) n.classList.add("rv"); });
+  const reveal = vh => pending.forEach(n => { if (n.getBoundingClientRect().top < vh * .86) {
+    n.classList.add("in"); pending.delete(n);
+    if (n.classList.contains("curt")) setTimeout(() => $(".clap").style.setProperty("--k", 0), 1100);
+  } });
+
+  // pointer depth in the hero
+  hero.addEventListener("pointermove", e => { if (reduceMotion) return; stage.parentNode.querySelector(".cards").style.cssText += `;--rx:${((e.clientX / innerWidth - .5) * 12).toFixed(2)}deg;--ry:${(-(e.clientY / innerHeight - .5) * 9).toFixed(2)}deg`; });
+
+  let busy = false;
+  const frame = () => {
+    busy = false; const vh = innerHeight, sy = scrollY;
+    document.documentElement.style.setProperty("--sp", (sy / Math.max(1, document.documentElement.scrollHeight - vh)).toFixed(4));
+
+    // active nav link = the last section whose top has passed 40% of the screen
+    let on = -1; sections.forEach((s, i) => { if (s.getBoundingClientRect().top <= vh * .4) on = i; });
+    links.forEach((l, i) => { l.classList.toggle("on", i === on); i === on ? l.setAttribute("aria-current", "true") : l.removeAttribute("aria-current"); });
+
+    reveal(vh);
+    rooms.forEach(r => { const t = r.getBoundingClientRect().top; if (t < vh * .6) r.classList.add("seen"); if (!reduceMotion) r.style.setProperty("--e", clamp((t - vh * .1) / (vh * .6)).toFixed(3)); });
+    if (reduceMotion) return;
+
+    const h = hero.getBoundingClientRect(), p = clamp(-h.top / (h.height - vh));       // hero push-in
+    stage.style.setProperty("--z", (1 + Math.pow(p, 1.6) * 3.2).toFixed(3)); stage.style.opacity = 1 - clamp((p - .7) / .3);
+    txt.style.setProperty("--o", (1 - clamp(p / .35)).toFixed(3)); hero.style.setProperty("--o", (1 - clamp(p / .35)).toFixed(3));
+
+    const ph = photo.getBoundingClientRect(), q = clamp(-ph.top / (ph.height - vh)), kk = 1 - clamp(q / .6);   // photo mask opens
+    pin.style.setProperty("--k", (kk * kk).toFixed(3));
+
+    tilts.forEach(n => { const b = n.getBoundingClientRect(); n.style.setProperty("--t", clamp(((b.top + b.height / 2) - vh / 2) / (vh / 2), -1, 1).toFixed(3)); });
+  };
+  const req = () => busy || (busy = true, requestAnimationFrame(frame));
+  addEventListener("scroll", req, { passive: true }); addEventListener("resize", req); frame();
+}
+
+
+/* ---------- 10. START ---------- */
+renderChrome(); renderRails(); renderVideo(); renderMusic(); renderPhotoManga(); motion();
 })();
