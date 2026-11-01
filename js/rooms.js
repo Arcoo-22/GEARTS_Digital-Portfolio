@@ -139,8 +139,7 @@ const ANALYSIS = {
 /* ---------- VIDEO ANALYSIS: paste your YouTube link between the quotes ---------- */
 const VIDEO = {
   url: "https://youtu.be/l3SPF_kXB8c?si=rSGPhKe5ITKoCO6k",    // EDIT: e.g. "https://youtu.be/xxxxxxxxxxx" or "https://www.youtube.com/watch?v=xxxxxxxxxxx"
-  title: "Balota, spoken",
-
+  title: "Balota, spoken"
 };
 
 /* ---------- SONG ---------- */
