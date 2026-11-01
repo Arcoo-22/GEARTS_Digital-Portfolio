@@ -93,7 +93,7 @@ const ROOMS = [
     tile: "img/t-ai.webp", before: "img/ai-before.webp", after: "img/ai-after.webp",
     alt: "Two versions of a painting of three men playing cards, with the figure on the left changed",
     cap: "Original: The Cardsharps, Caravaggio, about 1594.",
-    tool: "",     // EDIT: the AI tool you used, e.g. "Gemini"
+    tool: "Chatgpt",     // EDIT: the AI tool you used, e.g. "Gemini"
     prompt: "",   // EDIT: the instruction you gave it
     note: "I started from Caravaggio's The Cardsharps and used AI to rework the figure on the left. Drag the slider to compare the original with my version."   // EDIT: say what you changed and why
   },
@@ -153,8 +153,8 @@ const SONG = {
   artist: "Marco R. Ocampo",      // EDIT: artist name(s)
   year: 2026,                      // EDIT
   file: "audio/one-in-a-million.mp3",
-  cover: "img/music-cover.webp",
-  note: "Press play and let it run while you scroll. Tell the story of the song here: why you picked it, who it is for, what it means to you."   // EDIT
+  cover: "img/photography.webp",
+  note: "Press play and let it run while you scroll."   // EDIT
 };
 
 /* ---------- PHOTOGRAPHY ---------- */
@@ -171,12 +171,12 @@ const PHOTO = {
 const MANGA = {
   title: "Gojo",
   sub: "Ink study",
-  medium: "Pen on paper", year: 2024,   // the drawing is signed 10/27/2024
+  medium: "Manga art", year: 2024,   // the drawing is signed 10/27/2024
   img: "img/manga-gojo.webp", w: 1300, h: 1733,
   alt: "Black ink drawing of a spiky-haired anime character in profile, head bowed, with heavy black shading across the shoulder",
   kanji: "呪術廻戦",   // EDIT: the vertical text in the black panel. Change or clear it ("") if the character is from another series
-  bubble: "Black ink on white paper.",   // EDIT: your words about the drawing
-  note: "Drawn in black pen from a reference photo, first as a pencil sketch and then inked. The hair is made of quick, sharp strokes and the shoulder is filled with dense hatching."   // EDIT
+  bubble: "Manga art",   // EDIT: your words about the drawing
+  note: ""   // EDIT
 };
 
 /* ---------- APPENDICES: three folders. ----------
