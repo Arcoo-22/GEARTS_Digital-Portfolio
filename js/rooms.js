@@ -10,8 +10,7 @@
 const SITE = {
   name:      "Marco R. Ocampo",
   className: "BSIT 3A",
-  email:     "",   // EDIT: your email, e.g. "marco@school.edu". Leave "" to hide the contact link.
-  intro:     "Seven art-class pieces, a film analysis, a song, a photograph and a manga drawing, all in one reel. Scroll to move through it."
+  intro:     "Work from my art class, with a room for every piece. Scroll to step inside."
 };
 
 
@@ -106,9 +105,9 @@ const ROOMS = [
     tile: "img/t-time.webp", img: "img/time.webp", w: 900, h: 1352,
     alt: "Painting of a woman with folded hands in bold flat colors: orange face, purple and teal clothes, pink and blue background",
     eras: [["c. 1503", "Mona Lisa, Leonardo da Vinci: a Renaissance portrait"],
-           ["1905", "Modern: color for color’s sake"],
+           ["1860s–1970s", "Modern Art: color and expression over realism"],
            ["2026", "My version"]],
-    note: "The Mona Lisa rebuilt the Modern way: flat, loud colors chosen for feeling, not realism."   // EDIT
+    note: "Art Movement: Modern Art\nMy painting is inspired by Modern Art, which focuses on creativity, expression, and the use of colors in different ways. I used bright colors such as yellow, orange, pink, blue, purple, and green instead of realistic colors. I also blended yellow and orange to create a smooth transition from darker to lighter shades. For the blue areas, I added a little black to make the color darker and create more depth. I also used simple shapes, bold outlines, and visible brushstrokes to make the painting more expressive. These techniques give the painting a modern and creative look rather than making it completely realistic."
   },
 
   /* --- Finals video. describe = text description for people who can't watch/hear it.
@@ -155,7 +154,7 @@ const VIDEO = {
 
 /* ---------- SONG ---------- */
 const SONG = {
-  title: "One in a Million",
+  title: "ONE IN A MILLION",
   artist: "Marco R. Ocampo",      // EDIT: artist name(s)
   year: 2026,                      // EDIT
   file: "audio/one-in-a-million.mp3",
@@ -169,8 +168,8 @@ const PHOTO = {
   img: "img/photography.webp", w: 1300, h: 2311,
   alt: "A person in a white top and black trousers stands on grass under tall trees with sunlight breaking through the branches",
   caption: "Light through the branches.",   // EDIT
-  note: "A quiet moment under old trees, with the sun breaking through the canopy. Write where it was taken, what you wanted to capture and how you framed it.",   // EDIT
-  details: [["Place", "Add place"], ["Device", "Add device"], ["Year", "2026"]]   // EDIT
+  note: "A quiet moment under old trees in Anilao-Labac, Lipa City, with the sun breaking through the canopy.",   // EDIT: add what you wanted to capture
+  details: [["Place", "Anilao-Labac, Lipa City, Batangas"], ["Format", "JPEG, 2160 × 3840 px"]]
 };
 
 /* ---------- MANGA ---------- */
@@ -180,23 +179,22 @@ const MANGA = {
   medium: "Pen on paper", year: 2024,   // the drawing is signed 10/27/2024
   img: "img/manga-gojo.webp", w: 1300, h: 1733,
   alt: "Black ink drawing of a spiky-haired anime character in profile, head bowed, with heavy black shading across the shoulder",
+  kanji: "呪術廻戦",   // EDIT: the vertical text in the black panel. Change or clear it ("") if the character is from another series
   bubble: "Black ink on white paper.",   // EDIT: your words about the drawing
-  note: "Drawn in black pen after Gojo Satoru from Jujutsu Kaisen. The hair is made of quick, sharp strokes and the shoulder is filled with dense hatching."   // EDIT
+  note: "Drawn in black pen from a reference photo, first as a pencil sketch and then inked. The hair is made of quick, sharp strokes and the shoulder is filled with dense hatching."   // EDIT
 };
 
-/* ---------- APPENDICES: proofs and references. ----------
-   Put images in img/appendix/ and fill in `img`. Leave img "" to show an empty slot.
-   kind: "Proof" or "Reference". link is optional. */
+/* ---------- APPENDICES: three folders. ----------
+   steps = a row of pictures (process). img = one picture. details = label/value pairs. link = button.
+   wide = how wide the folder is when open. */
 const APPENDICES = [
-  { kind: "Reference", title: "Oebanda, K. (Director). (2024). Balota", text: "Film. GMA Pictures; GMA Entertainment Group; Cinemalaya Foundation.", link: "", img: "" },
-  { kind: "Reference", title: "ABS-CBN News (2025, May 11)", text: "Son of teacher killed in 1995 elections appeals to public to value their vote.", link: "https://abs-cbn.com/news/2025/5/11/son-of-teacher-killed-in-1995-elections-appeals-to-public-to-value-their-vote-1049", img: "" },
-  { kind: "Reference", title: "Pimentel, A. Q., Jr. (2007). Senate Resolution No. 630", text: "On the burning of Pinagbayanan Elementary School in Taysan, Batangas, and election-related violence.", link: "https://web.senate.gov.ph/lisdata/71205755!.pdf", img: "" },
-  { kind: "Reference", title: "The Cardsharps, Caravaggio, c. 1594", text: "Source painting for the AI art appropriation.", link: "", img: "" },
-  { kind: "Reference", title: "Mona Lisa, Leonardo da Vinci, c. 1503", text: "Source painting for Art through time.", link: "", img: "" },
-  { kind: "Proof", title: "Scribble: work in progress", text: "Add a photo of the drawing before the black cover.", link: "", img: "" },
-  { kind: "Proof", title: "Book-spine poetry: the shelf", text: "Add a photo of the books you picked.", link: "", img: "" },
-  { kind: "Proof", title: "Blackout poetry: original page", text: "Add the printed page before it was blacked out.", link: "", img: "" },
-  { kind: "Proof", title: "Coffee painting: process", text: "Add a photo of the painting being made.", link: "", img: "" },
-  { kind: "Proof", title: "AI appropriation: prompt screenshot", text: "Add a screenshot of the tool and prompt.", link: "", img: "" },
-  { kind: "Proof", title: "Photography and manga: originals", text: "Add the original files or a photo of the paper.", link: "", img: "" }
+  { kind: "Process", title: "Manga: sketch process", text: "From the reference photo to the inked drawing.", wide: "min(99vw,1120px)",
+    steps: [ { img: "img/appendix/ref.jpg", label: "Reference photo" },
+             { img: "img/appendix/first.jpg",   label: "Sketch 1" },
+             { img: "img/appendix/second.jpg",   label: "Sketch 2" },
+             { img: "img/appendix/third.jpg",      label: "Inked lines" } ] },
+  { kind: "Listen", title: "One in a Million on BandLab", text: "The track is also posted on BandLab.",
+    link: "https://www.bandlab.com/post/3d2c0dc5-2d2a-47e7-972d-0df6785c800b", linkLabel: "Open on BandLab" },
+  { kind: "Details", title: "Photography: image details", text: "Where the photograph was taken and the file it came from.", img: "img/photography.webp",
+    details: [["Location", "Anilao-Labac, Lipa City, Batangas"], ["File", "JPEG"], ["Size", "2160 × 3840 px"], ["Orientation", "Portrait"]] }
 ];

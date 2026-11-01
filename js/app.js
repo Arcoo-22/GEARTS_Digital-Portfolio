@@ -27,7 +27,7 @@ const mmss = s => isFinite(s) ? Math.floor(s / 60) + ":" + String(Math.floor(s %
    here and its styles in css/styles.css (sections marked ROOM). */
 const shell   = (r, inner) => `<section class="room r-${r.type}" style="${vars(r)}">${inner}</section>`;
 const heading = r => `<h2>${esc(r.title)}</h2><p class="sub">${esc(r.medium)}, ${r.year}</p>`;
-const note    = r => r.note ? `<p class="note">${esc(r.note)}</p>` : "";
+const note    = r => r.note ? r.note.split("\n").map(t => `<p class="note">${esc(t)}</p>`).join("") : "";
 
 const TEMPLATES = {
 
@@ -149,22 +149,46 @@ const INTERACTIONS = {
 
 /* ---------- 4. PAGE CHROME ---------- */
 function renderChrome() {
-  $("#nm").textContent = SITE.name;
-  const w = SITE.name.split(" "), last = w.pop();
-  $("#h1").innerHTML = [w.join(" "), last].filter(Boolean).map((t, i) => `<span class="ln"><span style="--i:${i}">${esc(t)}</span></span>`).join("");
-  $("#h1").setAttribute("aria-label", SITE.name);
+  $("#by").innerHTML = `<i></i>${esc(SITE.name)}<small>${esc(SITE.className)}</small>`;
   $("#intro").textContent = SITE.intro;
   $("#ft").innerHTML = esc(SITE.className) + (SITE.email ? `. Contact: <a href="mailto:${esc(SITE.email)}">${esc(SITE.email)}</a>` : "");
 
-  // floating cards in the hero: [x %, y %, size in vmin, depth px, tilt deg]
-  const spots = [[13,27,19,-80,-7],[87,29,20,40,6],[27,78,17,120,4],[82,80,16,-150,-5],[50,11,13,-320,2],[5,60,13,-260,8],[95,62,13,-240,-6],[62,90,14,200,3],[40,92,13,-100,-4]];
-  const pics = [...ROOMS.map(r => ({ src: r.tile, c: r.color, s: r.shadow, ink: r.ink })),
-    { src: "img/music-cover.webp", c: "#1ED760", s: "#14120C", ink: "#14120C" }, { src: "img/manga-gojo.webp", c: "#F3F1EA", s: "#14120C", ink: "#14120C" }];
-  const order = [0, 5, 3, 4, 2, 1, 6, 8, 7];            // which picture goes in which spot
-  $("#cards").innerHTML = spots.map((p, i) => { const x = pics[order[i]];
-    return `<div class="card" style="--x:${p[0]}%;--y:${p[1]}%;--w:clamp(90px,${p[2]}vmin,260px);--d:${p[3]}px;--r:${p[4]}deg;--a:${-i * 1.1}s;--c:${x.c};--s:${x.s};--ink:${x.ink}"><img src="${x.src}" alt="" ${i > 3 ? 'loading="lazy"' : ""}></div>`; }).join("");
+  // marquee strip at the bottom of the hero: edit the words here
+  const words = ["drawing", "painting", "poetry", "collage", "video", "photography", "manga", "music"];
+  const run = words.map(w => `<span>${w}</span><b>✺</b>`).join("");
+  $("#mq").innerHTML = run + run + run + run;
 
-  $("#idx").innerHTML = ROOMS.map(r => `<a class="tile t-${r.id}" href="#${r.id}" style="${vars(r)}"><img src="${r.tile}" alt="" loading="lazy"><b>${esc(r.title)}</b></a>`).join("");
+  // hero doodles: [shape, x %, y %, size px, depth px, color, tilt deg]. Depth = how far they float toward you.
+  const sv = (vb, inner) => `<svg viewBox="${vb}" aria-hidden="true">${inner}</svg>`, K = "#14120C";
+  const SH = {
+    star:  c => sv("0 0 40 40", `<path d="M20 3l5 11 12 1-9 8 3 12-11-6-11 6 3-12-9-8 12-1z" fill="${c}" stroke="${K}" stroke-width="2.4" stroke-linejoin="round"/>`),
+    heart: c => sv("0 0 40 40", `<path d="M20 35C5 24 4 14 11 9c5-3 8 0 9 3 1-3 4-6 9-3 7 5 6 15-9 26z" fill="${c}" stroke="${K}" stroke-width="2.4" stroke-linejoin="round"/>`),
+    squig: c => sv("0 0 60 30", `<path d="M3 20c6-14 12-14 18 0s12 14 18 0 12-14 18 0" fill="none" stroke="${c}" stroke-width="5" stroke-linecap="round"/>`),
+    zig:   c => sv("0 0 50 30", `<path d="M4 26L12 6l9 16 9-16 8 20" fill="none" stroke="${c}" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>`),
+    ring:  c => sv("0 0 30 30", `<circle cx="15" cy="15" r="10" fill="none" stroke="${c}" stroke-width="4"/>`),
+    dot:   c => sv("0 0 30 30", `<circle cx="15" cy="15" r="12" fill="${c}"/>`),
+    plus:  c => sv("0 0 30 30", `<path d="M15 4v22M4 15h22" stroke="${c}" stroke-width="4" stroke-linecap="round"/>`),
+    tri:   c => sv("0 0 40 40", `<path d="M6 34L16 6l20 22z" fill="${c}" stroke="${K}" stroke-width="2.4" stroke-linejoin="round"/>`),
+    link:  c => sv("0 0 44 44", `<circle cx="17" cy="22" r="10" fill="none" stroke="${c}" stroke-width="5"/><circle cx="28" cy="22" r="10" fill="none" stroke="${c}" stroke-width="5"/>`)
+  };
+  const doodles = [["heart",2.5,15,34,30,"#F78FB6",0],["star",25,15,46,70,"#FFC93C",-12],["squig",37,14,64,-40,"#2B44F5",0],["zig",71,14,50,60,"#2FB36D",0],["ring",82,16,26,20,"#F78FB6",0],
+    ["star",92,18,52,100,"#FF6B45",12],["dot",78,23,22,130,"#FF6B45",0],["dot",91,38,26,90,"#2B44F5",0],["plus",95,34,28,40,"#2B44F5",0],["ring",54,41,26,-30,"#FF6B45",0],
+    ["dot",57,52,30,110,"#FF6B45",0],["link",51,62,42,60,"#2FB36D",0],["star",48,72,36,30,"#F78FB6",15],["heart",54,69,26,20,"#FF6B45",-10],["plus",42,79,30,-20,"#FFC93C",0],
+    ["ring",20,82,26,40,"#2B44F5",0],["zig",31,81,50,60,"#FF6B45",0],["tri",9,79,36,50,"#2FB36D",-8],["heart",97,93,30,70,"#2B44F5",0],["dot",98,68,18,30,"#2FB36D",0]];
+  const ART = `<svg viewBox="0 0 640 600" role="img" aria-label="Illustration of a paint palette with a brush, a pencil and two tubes of paint"><g stroke="${K}" stroke-width="4" stroke-linejoin="round" stroke-linecap="round">
+    <path d="M118 318C96 200 196 112 338 110C484 108 598 188 598 304C598 396 540 446 474 452C438 455 420 474 404 498C380 534 336 540 296 532C196 514 134 430 118 318Z" fill="#EBDFC3"/>
+    <ellipse cx="256" cy="204" rx="35" ry="27" fill="#2B44F5" transform="rotate(-22 256 204)"/><ellipse cx="410" cy="168" rx="37" ry="28" fill="#FF6B45" transform="rotate(-12 410 168)"/>
+    <ellipse cx="478" cy="204" rx="30" ry="22" fill="#FFC93C"/><ellipse cx="188" cy="292" rx="28" ry="26" fill="${K}"/><ellipse cx="216" cy="378" rx="30" ry="28" fill="#DDE0FA"/>
+    <ellipse cx="534" cy="296" rx="30" ry="27" fill="#2FB36D"/><ellipse cx="520" cy="384" rx="31" ry="28" fill="#F78FB6"/><path d="M386 334c26-30 72-26 94 0-32 24-68 26-94 0z" fill="#4A5CF0" stroke="none"/>
+    <g transform="translate(262,336) rotate(-38)"><rect x="118" y="-13" width="272" height="26" rx="13" fill="#FFC93C"/><rect x="80" y="-12" width="44" height="24" fill="#B7B9C2"/><path d="M82 -12C58 -10 28 -6 0 0C28 6 58 10 82 12Z" fill="#2B44F5"/></g>
+    <g transform="translate(52,520) rotate(-24)"><rect x="34" y="-13" width="232" height="26" fill="#FFC93C"/><rect x="0" y="-13" width="40" height="26" rx="8" fill="#F78FB6"/><rect x="30" y="-13" width="14" height="26" fill="#B7B9C2"/><path d="M266 -13L330 0L266 13Z" fill="#F3DDB6"/><path d="M316 -4L330 0L316 4Z" fill="${K}"/></g>
+    <g transform="translate(486,452) rotate(-22)"><rect x="0" y="-20" width="100" height="40" fill="#FF6B45"/><rect x="0" y="-20" width="42" height="40" fill="#F9E3D8"/><rect x="96" y="-16" width="34" height="32" fill="#B7B9C2"/><rect x="-12" y="-13" width="14" height="26" fill="${K}"/></g>
+    <g transform="translate(446,520) rotate(10)"><rect x="0" y="-20" width="100" height="40" fill="#2FB36D"/><rect x="24" y="-20" width="40" height="40" fill="#E4F2EA"/><rect x="96" y="-16" width="34" height="32" fill="#B7B9C2"/><rect x="-14" y="-14" width="16" height="28" fill="${K}"/></g>
+    <g transform="translate(150,14) rotate(-6)"><rect x="-14" y="10" width="86" height="104" fill="#2B44F5" transform="rotate(-12 30 60)"/><rect x="-4" y="4" width="86" height="104" fill="#FF6B45" transform="rotate(-5 40 56)"/><rect x="4" y="0" width="90" height="112" fill="#fff"/><rect x="4" y="0" width="90" height="66" fill="#FFC93C"/></g>
+    <rect x="148" y="2" width="104" height="26" fill="#F78FB6" stroke="none" transform="rotate(-5 200 15)"/></g></svg>`;
+  const star = `<svg viewBox="0 0 120 120" aria-hidden="true"><polygon points="${Array.from({length: 24}, (_, i) => { const a = i * Math.PI / 12, r = i % 2 ? 46 : 58; return (60 + r * Math.cos(a)).toFixed(1) + "," + (60 + r * Math.sin(a)).toFixed(1); }).join(" ")}" fill="#FFC93C" stroke="${K}" stroke-width="3" stroke-linejoin="round"/><text x="60" y="70" text-anchor="middle" font-family="Bricolage Grotesque,sans-serif" font-weight="800" font-style="italic" font-size="34" fill="${K}">hi!</text></svg>`;
+  $("#cards").innerHTML = `<div class="hero-art">${ART}</div><div class="d hi" style="--x:47.5%;--y:24%;--w:clamp(70px,7vw,120px);--d:90px;--r:-8deg;--a:0s">${star}</div>` +
+    doodles.map((d, i) => `<div class="d" style="--x:${d[1]}%;--y:${d[2]}%;--w:${d[3]}px;--d:${d[4]}px;--r:${d[6]}deg;--a:${-i * 0.9}s">${SH[d[0]](d[5])}</div>`).join("");
 
   $("#rooms").innerHTML = ROOMS.map(r => TEMPLATES[r.type](r).replace('<section class="room', `<section id="${r.id}" class="room`)).join("");
   ROOMS.forEach(r => INTERACTIONS[r.type] && INTERACTIONS[r.type]($("#" + r.id)));
@@ -229,10 +253,13 @@ function renderRails() {
   rail($("#anHS"), $("#anUI"), "Written analysis pages",
     Array.from({ length: ANALYSIS.pages }, (_, i) => `<figure class="pg"><img src="img/analysis/page-${String(i + 1).padStart(2, "0")}.webp" width="935" height="1210" alt="Page ${i + 1} of the written analysis" draggable="false" ${i > 1 ? 'loading="lazy"' : ""}></figure>`).join(""),
     ANALYSIS.pdf ? `<a class="pill" href="${esc(ANALYSIS.pdf)}" download>Download PDF</a>` : "");
+  const fig = (src, alt) => `<img class="pf" src="${esc(src)}" alt="${esc(alt)}" loading="lazy" draggable="false">`;
   flexRail($("#apHS"), $("#apUI"), "Appendices: proofs and references",
-    APPENDICES.map(a => `<article class="fold" data-kind="${esc(a.kind)}"><span class="vt">${esc(a.title)}</span><div class="in"><span class="tag">${esc(a.kind)}</span><b>${esc(a.title)}</b><p>${esc(a.text)}</p>
-      ${a.img ? `<img class="pf" src="${esc(a.img)}" alt="${esc(a.title)}" loading="lazy" draggable="false">` : a.kind === "Proof" ? `<div class="ph">Image to be added</div>` : ""}
-      ${a.link ? `<a href="${esc(a.link)}" target="_blank" rel="noopener">Open source</a>` : ""}</div></article>`).join(""));
+    APPENDICES.map(a => `<article class="fold" data-kind="${esc(a.kind)}"${a.wide ? ` style="--W:${a.wide}"` : ""}><span class="vt">${esc(a.title)}</span><div class="in"><span class="tag">${esc(a.kind)}</span><b>${esc(a.title)}</b><p>${esc(a.text)}</p>
+      ${a.steps ? `<div class="steps">${a.steps.map((st, i) => `<figure><img src="${esc(st.img)}" alt="${esc(st.label)}" loading="lazy" draggable="false"><figcaption><b>${i + 1}</b>${esc(st.label)}</figcaption></figure>`).join("")}</div>` : ""}
+      ${a.details ? `<dl>${a.details.map(d => `<dt>${esc(d[0])}</dt><dd>${esc(d[1])}</dd>`).join("")}</dl>` : ""}
+      ${a.img ? fig(a.img, a.title) : ""}
+      ${a.link ? `<a class="go" href="${esc(a.link)}" target="_blank" rel="noopener">${esc(a.linkLabel || "Open link")}</a>` : ""}</div></article>`).join(""));
 }
 
 
@@ -285,7 +312,7 @@ function renderPhotoManga() {
   const M = MANGA;
   $("#manga").innerHTML = `<div class="mg">
     <figure class="pn a" style="margin:0"><img src="${M.img}" width="${M.w}" height="${M.h}" alt="${esc(M.alt)}" loading="lazy"></figure>
-    <div class="pn b"><span class="vt" aria-hidden="true">呪術廻戦</span><h2>${esc(M.title.toUpperCase())}</h2></div>
+    <div class="pn b">${M.kanji ? `<span class="vt" aria-hidden="true">${esc(M.kanji)}</span>` : ""}<h2>${esc(M.title.toUpperCase())}</h2></div>
     <div class="pn c" aria-hidden="true"><p class="sfx">ゴゴゴ</p></div>
     <div class="pn d"><div class="bub">${esc(M.bubble)}</div><p>${esc(M.note)}</p><small>${esc(M.sub)}. ${esc(M.medium)}, ${M.year}</small></div></div>`;
 }
@@ -299,7 +326,7 @@ function motion() {
   const sections = ids.map(i => $("#" + i));
 
   // mask reveals: headings, framed artwork and panels open as they enter view
-  const pending = new Set([...$$(".room h2, .room .art, .room .big, .sec h2, .work h2, .m-meta h2"), ...$$(".pn, .curt")]);
+  const pending = new Set([...$$(".room h2, .room .art, .room .big, .sec h2, .m-meta h2"), ...$$(".pn, .curt")]);
   pending.forEach(n => { if (!n.classList.contains("pn") && !n.classList.contains("curt")) n.classList.add("rv"); });
   const reveal = vh => pending.forEach(n => { if (n.getBoundingClientRect().top < vh * .86) {
     n.classList.add("in"); pending.delete(n);
@@ -323,7 +350,7 @@ function motion() {
     if (reduceMotion) return;
 
     const h = hero.getBoundingClientRect(), p = clamp(-h.top / (h.height - vh));       // hero push-in
-    stage.style.setProperty("--z", (1 + Math.pow(p, 1.6) * 3.2).toFixed(3)); stage.style.opacity = 1 - clamp((p - .7) / .3);
+    stage.style.setProperty("--z", (1 + Math.pow(p, 1.6) * 1.1).toFixed(3)); hero.style.setProperty("--hp", p.toFixed(3)); stage.style.opacity = 1 - clamp((p - .7) / .3);
     txt.style.setProperty("--o", (1 - clamp(p / .35)).toFixed(3)); hero.style.setProperty("--o", (1 - clamp(p / .35)).toFixed(3));
 
     const ph = photo.getBoundingClientRect(), q = clamp(-ph.top / (ph.height - vh)), kk = 1 - clamp(q / .6);   // photo mask opens
