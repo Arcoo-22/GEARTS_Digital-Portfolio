@@ -366,5 +366,7 @@ function motion() {
 
 
 /* ---------- 10. START ---------- */
-renderChrome(); renderRails(); renderVideo(); renderMusic(); renderPhotoManga(); motion();
+// each part runs on its own, so one broken piece can't blank the rest. If a section is missing, open the browser console (F12) to see which one failed.
+const run = (name, fn) => { try { fn(); } catch (e) { console.error(`[portfolio] "${name}" failed to build: ${e.message}. Check that js/rooms.js is the latest version and defines everything js/app.js needs (SITE, ROOMS, ANALYSIS, VIDEO, SONG, PHOTO, MANGA, APPENDICES).`); } };
+run("hero + artworks", renderChrome); run("analysis + appendices", renderRails); run("video", renderVideo); run("music", renderMusic); run("photography + manga", renderPhotoManga); run("scroll motion", motion);
 })();
