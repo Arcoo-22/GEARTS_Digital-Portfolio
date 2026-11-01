@@ -118,7 +118,7 @@ const ROOMS = [
     tile: "img/t-finals.webp", poster: "img/poster.webp", video: "video/finals.mp4",
     alt: "Still from a video showing a small statue of a figure in white with two children",
     captions: "",
-    describe: "A small statue of a figure in white stands with two children. The video runs 30 seconds and has sound.",   // EDIT: add what happens and what you hear
+    describe: "a short photo carousel using the small statue as the subject",   // EDIT: add what happens and what you hear
     note: "A 30-second video. Turn the sound on."
   }
 ];
@@ -154,16 +154,16 @@ const SONG = {
   year: 2026,                      // EDIT
   file: "audio/one-in-a-million.mp3",
   cover: "img/photography.webp",
-  note: "Press play and let it run while you scroll."   // EDIT
+  note: "Press play and listen while you scroll."   // EDIT
 };
 
 /* ---------- PHOTOGRAPHY ---------- */
 const PHOTO = {
   title: "Photography",
   img: "img/photography.webp", w: 1300, h: 2311,
-  alt: "A person in a white top and black trousers stands on grass under tall trees with sunlight breaking through the branches",
+  alt: "my girlfriend",
   caption: "Light through the branches.",   // EDIT
-  note: "A quiet moment under old trees in Anilao-Labac, Lipa City, with the sun breaking through the canopy.",   // EDIT: add what you wanted to capture
+  note: "A quiet moment under old trees in Anilao-Labac, Lipa City, with the sun shining through.",   // EDIT: add what you wanted to capture
   details: [["Place", "Anilao-Labac, Lipa City, Batangas"], ["Format", "JPEG, 2160 × 3840 px"]]
 };
 
@@ -173,7 +173,7 @@ const MANGA = {
   sub: "Ink study",
   medium: "Manga art", year: 2024,   // the drawing is signed 10/27/2024
   img: "img/manga-gojo.webp", w: 1300, h: 1733,
-  alt: "Black ink drawing of a spiky-haired anime character in profile, head bowed, with heavy black shading across the shoulder",
+  alt: "Gojo Satoru from JJK",
   kanji: "呪術廻戦",   // EDIT: the vertical text in the black panel. Change or clear it ("") if the character is from another series
   bubble: "Manga art",   // EDIT: your words about the drawing
   note: ""   // EDIT
