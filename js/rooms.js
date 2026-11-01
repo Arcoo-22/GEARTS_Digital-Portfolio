@@ -10,7 +10,6 @@
 const SITE = {
   name:      "Marco R. Ocampo",
   className: "BSIT 3A",
-  email:     "",   // EDIT: your email, e.g. "marco@school.edu". Leave "" to hide the contact link.
   intro:     "Work from my art class, with a room for every piece. Scroll to step inside."
 };
 
@@ -139,23 +138,18 @@ const ANALYSIS = {
 
 /* ---------- VIDEO ANALYSIS: paste your YouTube link between the quotes ---------- */
 const VIDEO = {
-  url: "",    // EDIT: e.g. "https://youtu.be/xxxxxxxxxxx" or "https://www.youtube.com/watch?v=xxxxxxxxxxx"
+  url: "https://youtu.be/l3SPF_kXB8c?si=rSGPhKe5ITKoCO6k",  
   title: "Balota, spoken",
   blurb: "The same analysis, recorded. Press play, or jump straight to a chapter.",
   // EDIT: t = start time in seconds for each chapter
   chapters: [
-    { name: "Observation",       t: 0 },
-    { name: "Cinematography",    t: 60 },
-    { name: "Editing",           t: 150 },
-    { name: "Sound design",      t: 220 },
-    { name: "Interpretation",    t: 300 },
-    { name: "Judgment",          t: 420 }
+
   ]
 };
 
 /* ---------- SONG ---------- */
 const SONG = {
-  title: "One in a Million",
+  title: "ONE IN A MILLION",
   artist: "Marco R. Ocampo",      // EDIT: artist name(s)
   year: 2026,                      // EDIT
   file: "audio/one-in-a-million.mp3",
@@ -189,12 +183,12 @@ const MANGA = {
    steps = a row of pictures (process). img = one picture. details = label/value pairs. link = button.
    wide = how wide the folder is when open. */
 const APPENDICES = [
-  { kind: "Process", title: "Manga: sketch process", text: "From the reference photo to the inked drawing.", wide: "min(94vw,1120px)",
+  { kind: "Process", title: "Manga: sketch process", text: "From the reference photo to the inked drawing.", wide: "min(99vw,1120px)",
     steps: [ { img: "img/appendix/ref.jpg", label: "Reference photo" },
              { img: "img/appendix/first.jpg",   label: "Sketch 1" },
              { img: "img/appendix/second.jpg",   label: "Sketch 2" },
              { img: "img/appendix/third.jpg",      label: "Inked lines" } ] },
-  { kind: "Listen", title: "One in a Million on BandLab", text: "The track is also posted on BandLab.", img: "img/music-cover.webp",
+  { kind: "Listen", title: "One in a Million on BandLab", text: "The track is also posted on BandLab.",
     link: "https://www.bandlab.com/post/3d2c0dc5-2d2a-47e7-972d-0df6785c800b", linkLabel: "Open on BandLab" },
   { kind: "Details", title: "Photography: image details", text: "Where the photograph was taken and the file it came from.", img: "img/photography.webp",
     details: [["Location", "Anilao-Labac, Lipa City, Batangas"], ["File", "JPEG"], ["Size", "2160 × 3840 px"], ["Orientation", "Portrait"]] }
