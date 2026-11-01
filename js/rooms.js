@@ -140,16 +140,7 @@ const ANALYSIS = {
 const VIDEO = {
   url: "https://youtu.be/l3SPF_kXB8c?si=rSGPhKe5ITKoCO6k",    // EDIT: e.g. "https://youtu.be/xxxxxxxxxxx" or "https://www.youtube.com/watch?v=xxxxxxxxxxx"
   title: "Balota, spoken",
-  blurb: "The same analysis, recorded. Press play, or jump straight to a chapter.",
-  // EDIT: t = start time in seconds for each chapter
-  chapters: [
-    { name: "Observation",       t: 0 },
-    { name: "Cinematography",    t: 60 },
-    { name: "Editing",           t: 150 },
-    { name: "Sound design",      t: 220 },
-    { name: "Interpretation",    t: 300 },
-    { name: "Judgment",          t: 420 }
-  ]
+
 };
 
 /* ---------- SONG ---------- */
