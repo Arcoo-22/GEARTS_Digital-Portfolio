@@ -268,7 +268,7 @@ function renderVideo() {
   const m = VIDEO.url.match(/(?:youtu\.be\/|v=|embed\/|shorts\/)([\w-]{11})/), id = m && m[1];
   const t0 = new Date().getFullYear();
   $("#vidWrap").innerHTML = `<h2 class="rv">${esc(VIDEO.title)}</h2><p class="lede">${esc(VIDEO.blurb)}</p>
-    <div class="clap" aria-hidden="true"><div class="arm"></div><div class="body"><b>${esc(ANALYSIS.title)}</b><span>Take 1</span><span>Directed by ${esc(SITE.name)}</span><span>${t0}</span></div></div>
+    <div class="clap" aria-hidden="true"><div class="arm"></div><div class="body"><b>${esc(ANALYSIS.title)}</b><span>Take 1</span><span></div></div>
     <div class="curt"><div class="screen" id="screen">${id
       ? `<button type="button" aria-label="Play the video analysis" style="background-image:url(https://i.ytimg.com/vi/${id}/hqdefault.jpg)"><span class="play"></span></button>`
       : `<div class="bars" role="img" aria-label="Test pattern. The video analysis is coming soon."><p>Stand by. The video analysis is coming soon.</p></div>`}</div>
