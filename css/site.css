@@ -21,12 +21,12 @@ h2{font:800 clamp(2.4rem,9vw,6rem)/.92 "Bricolage Grotesque",sans-serif;letter-s
   background:linear-gradient(135deg,rgba(58,58,70,.74),rgba(14,14,18,.84));
   backdrop-filter:blur(22px) saturate(1.8);-webkit-backdrop-filter:blur(22px) saturate(1.8);
   border:1px solid rgba(255,255,255,.3);box-shadow:0 14px 44px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.5),inset 0 -1px 0 rgba(255,255,255,.1)}
-#nav nav{min-width:0;display:flex;gap:.2rem;overflow-x:auto;scrollbar-width:none;margin-right:-.5rem}#nav nav::-webkit-scrollbar{display:none}
+#nav nav{position:relative;min-width:0;display:flex;gap:.2rem;overflow-x:auto;scrollbar-width:none;margin-right:-.5rem}#nav nav::-webkit-scrollbar{display:none}
 #nav nav a{color:#f4f2ec;text-decoration:none;font-weight:700;font-size:.95rem;padding:.55rem .85rem;min-height:44px;display:flex;align-items:center;border-radius:99px;white-space:nowrap;transition:background .2s,color .2s}
 #nav nav a:hover{color:#fff;background:rgba(255,255,255,.1)}
 #nav nav a.on{color:#0A0A0B;background:#fff}
 #prog{position:fixed;top:0;left:0;height:3px;width:100%;z-index:60;background:#FFD21F;transform:scaleX(var(--sp,0));transform-origin:left}
-@media (max-width:760px){#nav{height:56px}}
+@media (max-width:760px){#nav{height:56px}#nav nav a{padding:.5rem .75rem;font-size:.9rem}}
 
 /* 3 HERO — "Step into my studio": pastel waves, doodles floating at different depths, palette illustration */
 .pin{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden;display:grid;place-items:center}
@@ -164,7 +164,8 @@ h1 em{font-style:normal;color:transparent;-webkit-text-stroke:2.5px #14120C;back
 .row-t{display:grid;grid-template-columns:2rem 1fr auto;gap:1rem;align-items:center;padding:.7rem 1rem;border-radius:6px;background:rgba(255,255,255,.1)}
 .row-t b{font-weight:600}.row-t .n{color:#1ED760;text-align:center}.row-t span{color:#b3b3b3;font-size:.9rem}
 .bar-p{margin-top:1.4rem;display:grid;grid-template-columns:3.4rem 1fr 3.4rem;gap:.8rem;align-items:center;font-size:.85rem;color:#b3b3b3}
-.bar-p input[type=range]{width:100%;accent-color:#1ED760;height:24px;cursor:pointer}
+.bar-p input[type=range]{width:100%;accent-color:#1ED760;height:44px;cursor:pointer}
+@media (max-width:600px){.vol{display:none}.m-ctl{gap:1rem}}
 .vol{display:flex;align-items:center;gap:.5rem;margin-left:auto;color:#b3b3b3}.vol input{width:90px;accent-color:#1ED760}
 .m-note{max-width:60ch;color:#d0d0d0;margin:2rem 0 0}
 

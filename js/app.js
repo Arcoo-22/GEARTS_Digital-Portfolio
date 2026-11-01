@@ -336,13 +336,15 @@ function motion() {
   // pointer depth in the hero
   hero.addEventListener("pointermove", e => { if (reduceMotion) return; stage.parentNode.querySelector(".cards").style.cssText += `;--rx:${((e.clientX / innerWidth - .5) * 12).toFixed(2)}deg;--ry:${(-(e.clientY / innerHeight - .5) * 9).toFixed(2)}deg`; });
 
-  let busy = false;
+  let busy = false, lastOn = -2;
   const frame = () => {
     busy = false; const vh = innerHeight, sy = scrollY;
     document.documentElement.style.setProperty("--sp", (sy / Math.max(1, document.documentElement.scrollHeight - vh)).toFixed(4));
 
     // active nav link = the last section whose top has passed 40% of the screen
     let on = -1; sections.forEach((s, i) => { if (s.getBoundingClientRect().top <= vh * .4) on = i; });
+    if (on !== lastOn && on >= 0) { const nv = links[on].parentNode, l = links[on]; nv.scrollTo({ left: l.offsetLeft - (nv.clientWidth - l.offsetWidth) / 2, behavior: reduceMotion ? "auto" : "smooth" }); }   // keep the current link visible in the phone nav
+    lastOn = on;
     links.forEach((l, i) => { l.classList.toggle("on", i === on); i === on ? l.setAttribute("aria-current", "true") : l.removeAttribute("aria-current"); });
 
     reveal(vh);
