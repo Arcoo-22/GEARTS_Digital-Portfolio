@@ -21,6 +21,7 @@ const SITE = {
      title     shown on the tile and in the room
      medium    materials, shown under the title
      year      year made
+     date      date the piece was made (shown under the title)
      color     room + tile background       shadow  offset shadow color      ink  text color
      tile      small picture for the home grid
      alt       description of the artwork for screen readers
@@ -30,7 +31,7 @@ const ROOMS = [
 
   /* --- Scribble drawing --- */
   {
-    id: "scribble", type: "scribble", title: "The Fear of Being Seen", medium: "Pen and marker", year: 2026,
+    id: "scribble", type: "scribble", title: "The Fear of Being Seen", medium: "Pen and marker", year: 2026, date: "July 21, 2026",
     color: "#FF7A3D", shadow: "#14120C", ink: "#14120C",
     tile: "img/t-scribble.webp", img: "img/scribble.webp",
     alt: "Scribble drawing of a large eye crossed out with two black lines, surrounded by swirls and orange circles with x marks",
@@ -39,7 +40,7 @@ const ROOMS = [
 
   /* --- Book-spine poetry: each shelf has lines; y and h are % of the photo (position and height of each spine) --- */
   {
-    id: "spines", type: "spines", title: "Book-spine poetry", medium: "Found library books", year: 2026,
+    id: "spines", type: "spines", title: "Book-spine poetry", medium: "Found library books", year: 2026, date: "July 28, 2026",
     color: "#3D6BFF", shadow: "#FFD21F", ink: "#FFFFFF",
     tile: "img/t-spines.webp",
     alt: "Stack of library books whose spines read as lines of a poem",
@@ -65,9 +66,18 @@ const ROOMS = [
     note: "Tap a spine, or a line of the poem, to read them together. The titles on the shelf are the only words I used."   // EDIT
   },
 
+  /* --- Coffee painting --- */
+  {
+    id: "coffee", type: "coffee", title: "Coffee painting", medium: "Coffee on paper", year: 2026, date: "August 4, 2026",
+    color: "#E3B77A", shadow: "#6B3E1B", ink: "#14120C",
+    tile: "img/t-coffee.webp", img: "img/coffee.webp", w: 1400, h: 1050,
+    alt: "Landscape painted in brown coffee tones with two large hills, a winding river, and clusters of trees",
+    note: "Painted with coffee alone: pale washes for the hills, dark lines for the river and trees."
+  },
+
   /* --- Blackout poetry. rows = [bar width %, kept word, word-end bar %]; poem = the finished text --- */
   {
-    id: "blackout", type: "blackout", title: "Blackout poetry", medium: "Marker on printed page", year: 2026,
+    id: "blackout", type: "blackout", title: "Blackout poetry", medium: "Marker on printed page", year: 2026, date: "September 1, 2026",
     color: "#C8F169", shadow: "#14120C", ink: "#14120C",
     tile: "img/t-blackout.webp", img: "img/blackout.webp",
     alt: "Blackout poem with a black marker block, a few visible words, and doodles of a paper plane, clouds, leaves, and a book",
@@ -77,18 +87,9 @@ const ROOMS = [
     note: "I blacked out a printed page and kept only the words that said something on their own. The doodles around it carry the same hopeful mood."   // EDIT
   },
 
-  /* --- Coffee painting --- */
-  {
-    id: "coffee", type: "coffee", title: "Coffee painting", medium: "Coffee on paper", year: 2026,
-    color: "#E3B77A", shadow: "#6B3E1B", ink: "#14120C",
-    tile: "img/t-coffee.webp", img: "img/coffee.webp", w: 1400, h: 1050,
-    alt: "Landscape painted in brown coffee tones with two large hills, a winding river, and clusters of trees",
-    note: "Painted with coffee alone: pale washes for the hills, dark lines for the river and trees."
-  },
-
   /* --- AI appropriation. tool and prompt are optional: fill them in and they appear under the picture --- */
   {
-    id: "ai", type: "ai", title: "AI art appropriation", medium: "AI-edited painting", year: 2026,
+    id: "ai", type: "ai", title: "AI art appropriation", medium: "AI-edited painting", year: 2026, date: "September 22, 2026",
     color: "#8B5CF6", shadow: "#FFD21F", ink: "#FFFFFF",
     tile: "img/t-ai.webp", before: "img/ai-before.webp", after: "img/ai-after.webp",
     alt: "Two versions of a painting of three men playing cards, with the figure on the left changed",
@@ -100,7 +101,7 @@ const ROOMS = [
 
   /* --- Art through time. eras = [date, label] --- */
   {
-    id: "time", type: "time", title: "Art through time", medium: "Paint on paper", year: 2026,
+    id: "time", type: "time", title: "Art through time", medium: "Paint on paper", year: 2026, date: "October 6, 2026",
     color: "#FFD21F", shadow: "#E8588A", ink: "#14120C",
     tile: "img/t-time.webp", img: "img/time.webp", w: 900, h: 1352,
     alt: "Painting of a woman with folded hands in bold flat colors: orange face, purple and teal clothes, pink and blue background",
@@ -113,7 +114,7 @@ const ROOMS = [
   /* --- Finals video. describe = text description for people who can't watch/hear it.
          captions = optional path to a .vtt subtitle file, e.g. "video/finals.vtt" --- */
   {
-    id: "finals", type: "finals", title: "Finals multimedia art", medium: "Video with sound", year: 2026,
+    id: "finals", type: "finals", title: "Finals multimedia art", medium: "Video with sound", year: 2026, date: "October 13, 2026",
     color: "#14120C", shadow: "#E8588A", ink: "#FFFFFF",
     tile: "img/t-finals.webp", poster: "img/poster.webp", video: "video/finals.mp4",
     alt: "Still from a video showing a small statue of a figure in white with two children",
@@ -131,6 +132,7 @@ const ROOMS = [
 /* ---------- WRITTEN ANALYSIS: pages are img/analysis/page-01.webp ... (already made from your PDF) ---------- */
 const ANALYSIS = {
   title: "Balota (2024): artwork analysis",
+  date: "September 29, 2026",
   blurb: "A written analysis of a five-minute sequence from Dakip “Kip” Oebanda’s film, using the art criticism process: observation, analysis, contextualization, interpretation and judgment. Drag or swipe through the pages.",
   pages: 15,
   pdf: "Balota_Written_Analysis.pdf"
@@ -140,6 +142,7 @@ const ANALYSIS = {
 const VIDEO = {
   url: "https://youtu.be/l3SPF_kXB8c?si=rSGPhKe5ITKoCO6k",  
   title: "Balota, spoken",
+  date: "September 29, 2026",
   blurb: "The same analysis, recorded. Press play, or jump straight to a chapter.",
   // EDIT: t = start time in seconds for each chapter
   chapters: [

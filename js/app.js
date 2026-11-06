@@ -26,7 +26,7 @@ const mmss = s => isFinite(s) ? Math.floor(s / 60) + ":" + String(Math.floor(s %
    Each function returns the HTML for one room type. To change a room's layout, edit its function
    here and its styles in css/styles.css (sections marked ROOM). */
 const shell   = (r, inner) => `<section class="room r-${r.type}" style="${vars(r)}">${inner}</section>`;
-const heading = r => `<h2>${esc(r.title)}</h2><p class="sub">${esc(r.medium)}, ${r.year}</p>`;
+const heading = r => `<h2>${esc(r.title)}</h2><p class="sub">${esc(r.medium)}, ${esc(r.date || r.year)}</p>`;
 const note    = r => r.note ? r.note.split("\n").map(t => `<p class="note">${esc(t)}</p>`).join("") : "";
 
 const TEMPLATES = {
@@ -40,7 +40,7 @@ const TEMPLATES = {
     <p class="hint">Rub the black away to see the drawing.</p>
     <button class="btn" data-act="all">Show all</button>${note(r)}`),
 
-  spines: r => shell(r, `<h2>${esc(r.title)}</h2>${note(r)}
+  spines: r => shell(r, `<h2>${esc(r.title)}</h2><p class="sub">${esc(r.date)}</p>${note(r)}
     ${r.shelves.map(s => `<div class="shelf">
       <div class="pic art"><img src="${s.img}" width="${s.w}" height="${s.h}" alt="${esc(s.alt)}" loading="lazy">
         ${s.lines.map((l, i) => `<button class="band" data-i="${i}" style="top:${l.y}%;height:${l.h}%" aria-label="${esc(l.t)}"></button>`).join("")}
@@ -63,7 +63,7 @@ const TEMPLATES = {
   coffee: r => shell(r, `${heading(r)}
     <div class="cof art"><img src="${r.img}" width="${r.w}" height="${r.h}" alt="${esc(r.alt)}"></div>${note(r)}`),
 
-  ai: r => shell(r, `<h2>${esc(r.title)}</h2>
+  ai: r => shell(r, `<h2>${esc(r.title)}</h2><p class="sub">${esc(r.date)}</p>
     <div class="frame art" role="group" aria-label="Before and after slider">
       <img src="${r.before}" width="930" height="668" alt="Original painting">
       <img class="top" src="${r.after}" width="930" height="668" alt="Reworked painting">
@@ -73,11 +73,11 @@ const TEMPLATES = {
     <p class="cap">${esc(r.cap)}</p>
     ${r.tool ? `<p class="cap">Made with ${esc(r.tool)}${r.prompt ? `. Prompt: “${esc(r.prompt)}”` : ""}</p>` : ""}${note(r)}`),
 
-  time: r => shell(r, `<h2>${esc(r.title)}</h2>
+  time: r => shell(r, `<h2>${esc(r.title)}</h2><p class="sub">${esc(r.date)}</p>
     <div class="tm"><div class="paint"><img src="${r.img}" width="${r.w}" height="${r.h}" alt="${esc(r.alt)}"></div>
       <div><ol class="era">${r.eras.map(e => `<li><b>${esc(e[0])}</b>${esc(e[1])}</li>`).join("")}</ol>${note(r)}</div></div>`),
 
-  finals: r => shell(r, `<h2>${esc(r.title)}</h2>
+  finals: r => shell(r, `<h2>${esc(r.title)}</h2><p class="sub">${esc(r.date)}</p>
     <div class="vid"><video controls playsinline preload="none" poster="${r.poster}" aria-label="${esc(r.alt)}">
       <source src="${r.video}" type="video/mp4">${r.captions ? `<track kind="captions" src="${r.captions}" srclang="en" label="English" default>` : ""}</video></div>
     ${note(r)}
@@ -190,7 +190,10 @@ function renderChrome() {
   $("#cards").innerHTML = `<div class="hero-art">${ART}</div><div class="d hi" style="--x:47.5%;--y:24%;--w:clamp(70px,7vw,120px);--d:90px;--r:-8deg;--a:0s">${star}</div>` +
     doodles.map((d, i) => `<div class="d" style="--x:${d[1]}%;--y:${d[2]}%;--w:${d[3]}px;--d:${d[4]}px;--r:${d[6]}deg;--a:${-i * 0.9}s">${SH[d[0]](d[5])}</div>`).join("");
 
-  $("#rooms").innerHTML = ROOMS.map(r => TEMPLATES[r.type](r).replace('<section class="room', `<section id="${r.id}" class="room`)).join("");
+  const draw = list => list.map(r => TEMPLATES[r.type](r).replace('<section class="room', `<section id="${r.id}" class="room`)).join("");
+  const split = ROOMS.findIndex(r => r.id === "ai") + 1;   // rooms up to "ai" come before the analysis + video; the rest come after
+  $("#rooms").innerHTML = draw(ROOMS.slice(0, split));
+  $("#rooms2").innerHTML = draw(ROOMS.slice(split));
   ROOMS.forEach(r => INTERACTIONS[r.type] && INTERACTIONS[r.type]($("#" + r.id)));
   $$(".room .pic, .room .cof, .room .paint, .room .bo figure").forEach(n => n.classList.add("tilt"));   // 3D lean while scrolling
 }
@@ -250,6 +253,7 @@ function flexRail(el, ui, label, items) {
 
 function renderRails() {
   $("#anT").textContent = ANALYSIS.title; $("#anB").textContent = ANALYSIS.blurb;
+  $("#anB").insertAdjacentHTML("beforebegin", `<p class="sub">${esc(ANALYSIS.date)}</p>`);
   rail($("#anHS"), $("#anUI"), "Written analysis pages",
     Array.from({ length: ANALYSIS.pages }, (_, i) => `<figure class="pg"><img src="img/analysis/page-${String(i + 1).padStart(2, "0")}.webp" width="935" height="1210" alt="Page ${i + 1} of the written analysis" draggable="false" ${i > 1 ? 'loading="lazy"' : ""}></figure>`).join(""),
     ANALYSIS.pdf ? `<a class="pill" href="${esc(ANALYSIS.pdf)}" download>Download PDF</a>` : "");
@@ -267,7 +271,7 @@ function renderRails() {
 function renderVideo() {
   const m = VIDEO.url.match(/(?:youtu\.be\/|v=|embed\/|shorts\/)([\w-]{11})/), id = m && m[1];
   const t0 = new Date().getFullYear();
-  $("#vidWrap").innerHTML = `<h2 class="rv">${esc(VIDEO.title)}</h2><p class="lede">${esc(VIDEO.blurb)}</p>
+  $("#vidWrap").innerHTML = `<h2 class="rv">${esc(VIDEO.title)}</h2><p class="sub">${esc(VIDEO.date)}</p><p class="lede">${esc(VIDEO.blurb)}</p>
     <div class="clap" aria-hidden="true"><div class="arm"></div><div class="body"><b>${esc(ANALYSIS.title)}</b><span>Take 1</span><span></div></div>
     <div class="curt"><div class="screen" id="screen">${id
       ? `<button type="button" aria-label="Play the video analysis" style="background-image:url(https://i.ytimg.com/vi/${id}/hqdefault.jpg)"><span class="play"></span></button>`
